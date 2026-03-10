@@ -1,6 +1,6 @@
 name: flutter_architect_ai
 description: AI-powered Flutter project architecture generator using Clean Architecture patterns.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/prathameshdot/flutter_architect_ai
 homepage: https://github.com/prathameshdot/flutter_architect_ai
 issue_tracker: https://github.com/prathameshdot/flutter_architect_ai/issues
