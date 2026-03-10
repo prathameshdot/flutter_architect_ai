@@ -1,3 +1,17 @@
+/// Provides template constants for generating Flutter project structures
+///
+/// This class contains predefined templates for Clean Architecture projects,
+/// including directory structures, pubspec.yaml configuration, analysis options,
+/// and other configuration files needed to scaffold a complete Flutter project.
+///
+/// Templates are provided as constants that can be used to generate project
+/// boilerplate files. Placeholders like {PROJECT_NAME} should be replaced
+/// with actual values before writing to disk.
+///
+/// Available templates:
+/// - cleanArchitectureStructure: Complete lib/ directory structure
+/// - pubspecTemplate: Dependencies and project configuration
+/// - analysisOptionsTemplate: Dart analysis rules and linting configuration
 class ProjectTemplate {
   static const String cleanArchitectureStructure = '''
 lib/
