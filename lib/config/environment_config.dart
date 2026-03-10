@@ -1,5 +1,23 @@
 import 'dart:io';
 
+/// Manages environment configuration for Flutter Architect AI
+///
+/// This class handles loading and accessing environment variables from multiple sources
+/// with the following priority order:
+/// 1. GitHub Actions secrets/environment variables
+/// 2. System environment variables (Docker, CI/CD)
+/// 3. .env file (local development)
+/// 4. Default values
+///
+/// Example:
+/// ```dart
+/// // Initialize once at startup
+/// await EnvironmentConfig.initialize();
+///
+/// // Access configuration throughout the app
+/// final apiKey = EnvironmentConfig.groqApiKey;
+/// final version = EnvironmentConfig.appVersion;
+/// ```
 class EnvironmentConfig {
   static late String _groqApiKey;
   static late String _appVersion;
@@ -7,8 +25,29 @@ class EnvironmentConfig {
 
   static bool _isInitialized = false;
 
-  /// Initialize environment variables
-  /// Priority: GitHub Actions secrets/environment > .env file > defaults
+  /// Initialize environment variables from available sources
+  ///
+  /// Loads environment variables in priority order:
+  /// 1. System environment (GitHub Actions, Docker)
+  /// 2. .env file in project root
+  /// 3. Default fallback values
+  ///
+  /// Required variables:
+  ///   - GROQ_API_KEY: API key for Groq AI service
+  ///
+  /// Optional variables:
+  ///   - APP_VERSION: Application version (default: 1.0.0)
+  ///   - LOG_LEVEL: Logging level (default: INFO)
+  ///
+  /// Throws an exception if GROQ_API_KEY is not found in any source.
+  ///
+  /// Example:
+  /// ```dart
+  /// void main() async {
+  ///   await EnvironmentConfig.initialize();
+  ///   runApp(MyApp());
+  /// }
+  /// ```
   static Future<void> initialize() async {
     if (_isInitialized) return;
 
@@ -78,6 +117,19 @@ class EnvironmentConfig {
     }
   }
 
+  /// Get the Groq AI API key
+  ///
+  /// Returns the API key used for authenticating with Groq AI services.
+  /// This key is required for AI-powered project generation features.
+  ///
+  /// Returns: The Groq API key string
+  ///
+  /// Throws: Exception if [initialize] hasn't been called yet
+  ///
+  /// Example:
+  /// ```dart
+  /// final apiKey = EnvironmentConfig.groqApiKey;
+  /// ```
   static String get groqApiKey {
     if (!_isInitialized) {
       throw Exception('Environment not initialized. Call initialize() first.');
@@ -85,6 +137,19 @@ class EnvironmentConfig {
     return _groqApiKey;
   }
 
+  /// Get the application version
+  ///
+  /// Returns the version string of Flutter Architect AI.
+  /// Used in generated project pubspec.yaml files.
+  ///
+  /// Returns: Version in semver format (e.g., "1.0.0")
+  ///
+  /// Throws: Exception if [initialize] hasn't been called yet
+  ///
+  /// Example:
+  /// ```dart
+  /// final version = EnvironmentConfig.appVersion; // "1.0.0"
+  /// ```
   static String get appVersion {
     if (!_isInitialized) {
       throw Exception('Environment not initialized. Call initialize() first.');
@@ -92,6 +157,23 @@ class EnvironmentConfig {
     return _appVersion;
   }
 
+  /// Get the logging level
+  ///
+  /// Returns the logging level for the application.
+  /// Controls verbosity of log output: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+  /// Defaults to INFO if not specified.
+  ///
+  /// Returns: Log level string (e.g., "INFO", "DEBUG")
+  ///
+  /// Throws: Exception if [initialize] hasn't been called yet
+  ///
+  /// Example:
+  /// ```dart
+  /// final level = EnvironmentConfig.logLevel; // "INFO"
+  /// if (level == "DEBUG") {
+  ///   // Enable verbose logging
+  /// }
+  /// ```
   static String get logLevel {
     if (!_isInitialized) {
       throw Exception('Environment not initialized. Call initialize() first.');
@@ -100,9 +182,33 @@ class EnvironmentConfig {
   }
 
   /// Check if environment is properly configured
+  ///
+  /// Returns true if the environment has been initialized and has
+  /// all required configuration values (particularly GROQ_API_KEY).
+  ///
+  /// Returns: true if properly configured, false otherwise
+  ///
+  /// Example:
+  /// ```dart
+  /// if (EnvironmentConfig.isConfigured) {
+  ///   // Safe to use AI features
+  ///   startAiGeneration();
+  /// }
+  /// ```
   static bool get isConfigured => _isInitialized && _groqApiKey.isNotEmpty;
 
   /// Get configuration status for debugging
+  ///
+  /// Returns a string representation of the initialization state.
+  /// Useful for logging and troubleshooting configuration issues.
+  ///
+  /// Returns: "NOT_INITIALIZED" or "INITIALIZED"
+  ///
+  /// Example:
+  /// ```dart
+  /// print('Config status: ${EnvironmentConfig.configStatus}');
+  /// // Output: "Config status: INITIALIZED"
+  /// ```
   static String get configStatus {
     if (!_isInitialized) return 'NOT_INITIALIZED';
     return 'INITIALIZED';

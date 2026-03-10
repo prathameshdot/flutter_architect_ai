@@ -1,12 +1,43 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
+/// Generates file and directory structure for Flutter projects
+///
+/// This class handles the creation of complete project directory structures
+/// following Clean Architecture principles. It creates all necessary folders,
+/// placeholder files, and boilerplate code templates.
+///
+/// Example:
+/// ```dart
+/// final generator = FileGenerator(projectPath: './my_app');
+/// await generator.generateCoreStructure({});
+/// await generator.generateFeatureStructure('auth', {});
+/// ```
 class FileGenerator {
+  /// The root path where the project will be generated
   final String projectPath;
 
+  /// Creates a new [FileGenerator]
+  ///
+  /// The [projectPath] is where all generated files and directories
+  /// will be created.
   FileGenerator({required this.projectPath});
 
-  /// Create directory structure
+  /// Create directory structure for a list of directories
+  ///
+  /// Creates all directories recursively and adds .gitkeep files
+  /// to preserve empty directories in version control.
+  ///
+  /// Parameters:
+  ///   - [directories]: List of relative directory paths to create
+  ///
+  /// Example:
+  /// ```dart
+  /// await generator.createDirectoryStructure([
+  ///   'lib/core/constants',
+  ///   'lib/features/auth/data',
+  /// ]);
+  /// ```
   Future<void> createDirectoryStructure(List<String> directories) async {
     for (final dir in directories) {
       final fullPath = path.join(projectPath, dir);
@@ -20,7 +51,26 @@ class FileGenerator {
     }
   }
 
-  /// Create file with content
+  /// Create a file with the specified content
+  ///
+  /// Creates the file at the given path relative to [projectPath].
+  /// Automatically creates parent directories if they don't exist.
+  /// Can optionally overwrite existing files.
+  ///
+  /// Parameters:
+  ///   - [filePath]: Path to the file relative to project root
+  ///   - [content]: Content to write to the file
+  ///   - [overwrite]: If true, overwrites existing file (default: false)
+  ///
+  /// Throws an exception if file creation fails.
+  ///
+  /// Example:
+  /// ```dart
+  /// await generator.createFile(
+  ///   filePath: 'lib/main.dart',
+  ///   content: 'void main() { runApp(MyApp()); }',
+  /// );
+  /// ```
   Future<void> createFile({
     required String filePath,
     required String content,
@@ -34,20 +84,45 @@ class FileGenerator {
 
     // Check if file exists
     if (await file.exists() && !overwrite) {
-      print('⚠️  File already exists: $filePath (skipping)');
+      print('File already exists: $filePath (skipping)');
       return;
     }
 
     try {
       await file.writeAsString(content);
-      print('✅ Created: $filePath');
+      print('Created: $filePath');
     } catch (e) {
-      print('❌ Error creating $filePath: $e');
+      print('Error creating $filePath: $e');
       rethrow;
     }
   }
 
-  /// Generate entire feature module
+  /// Generate a complete feature module structure
+  ///
+  /// Creates all necessary directories and boilerplate files for a feature
+  /// following Clean Architecture principles.
+  ///
+  /// Parameters:
+  ///   - [featureName]: Name of the feature (e.g., 'authentication', 'products')
+  ///   - [stateManagement]: State management framework (bloc, riverpod, provider, getx)
+  ///   - [templates]: Map of template files to generate
+  ///
+  /// Creates the following structure:
+  /// ```
+  /// lib/features/{featureName}/
+  ///   data/
+  ///     datasources/
+  ///     models/
+  ///     repositories/
+  ///   domain/
+  ///     entities/
+  ///     repositories/
+  ///     usecases/
+  ///   presentation/
+  ///     bloc/riverpod/provider/getx/
+  ///     pages/
+  ///     widgets/
+  /// ```
   Future<void> generateFeature({
     required String featureName,
     required String stateManagement,
@@ -110,6 +185,25 @@ class FileGenerator {
   }
 
   /// Generate core directory structure
+  ///
+  /// Creates all core module directories and generates essential boilerplate files
+  /// for common functionality needed across the application including constants,
+  /// error handling, networking, theme management, utilities, and services.
+  ///
+  /// Parameters:
+  ///   - [coreTemplates]: Map of custom templates to override defaults
+  ///
+  /// Creates the following core structure:
+  /// ```
+  /// lib/core/
+  ///   constants/        - Application-wide constants
+  ///   error/            - Custom exceptions and failures
+  ///   network/          - API client and networking
+  ///   services/         - Logging, analytics, device info
+  ///   theme/            - Colors, typography, UI theme
+  ///   utils/            - Extensions, validators, formatters, helpers
+  ///   widgets/          - Reusable UI components
+  /// ```
   Future<void> generateCoreStructure(Map<String, String> coreTemplates) async {
     final coreStructure = [
       'lib/core/constants',
@@ -169,6 +263,22 @@ class FileGenerator {
   }
 
   /// Generate config directory
+  ///
+  /// Creates configuration-related directories and files for dependency injection,
+  /// environment management, and application routing.
+  ///
+  /// Parameters:
+  ///   - [stateManagement]: State management framework being used
+  ///   - [backend]: Backend/API type for the application
+  ///   - [templates]: Map of custom configuration templates
+  ///
+  /// Creates the following structure:
+  /// ```
+  /// lib/config/
+  ///   di/           - Dependency injection and service locator setup
+  ///   environment/  - Environment-specific configuration
+  ///   routes/       - Application routing configuration
+  /// ```
   Future<void> generateConfig(
     String stateManagement,
     String backend,
@@ -199,6 +309,36 @@ class FileGenerator {
   }
 
   /// Generate project configuration files
+  ///
+  /// Creates essential project configuration files at the root level including
+  /// pubspec.yaml for dependencies, analysis_options.yaml for linting, .gitignore,
+  /// and main.dart entry point.
+  ///
+  /// Parameters:
+  ///   - [projectName]: Name of the Flutter project
+  ///   - [projectDescription]: Brief description of the project
+  ///   - [pubspecContent]: Complete pubspec.yaml content with all dependencies
+  ///   - [analysisOptions]: Dart analysis configuration and lint rules
+  ///   - [gitignore]: Git ignore patterns for the project
+  ///   - [mainDart]: Main application entry point code
+  ///
+  /// Files created:
+  ///   - pubspec.yaml: Dependency and project configuration
+  ///   - analysis_options.yaml: Dart analyzer rules
+  ///   - .gitignore: Version control ignore patterns
+  ///   - lib/main.dart: Application entry point
+  ///
+  /// Example:
+  /// ```dart
+  /// await generator.generateConfigFiles(
+  ///   projectName: 'my_app',
+  ///   projectDescription: 'A beautiful Flutter app',
+  ///   pubspecContent: pubspecYamlContent,
+  ///   analysisOptions: analysisYamlContent,
+  ///   gitignore: gitignoreContent,
+  ///   mainDart: mainDartContent,
+  /// );
+  /// ```
   Future<void> generateConfigFiles({
     required String projectName,
     required String projectDescription,

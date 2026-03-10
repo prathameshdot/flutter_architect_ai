@@ -1,6 +1,19 @@
 import 'console_output.dart';
 
-/// Simplified CLI interface for Flutter Architect AI
+/// Holds CLI options and configuration for project generation
+///
+/// This class encapsulates all the command-line options provided by the user
+/// to customize the Flutter project generation process.
+///
+/// Usage:
+/// ```dart
+/// final options = CLIOptions(
+///   description: 'Build an ecommerce app',
+///   stateMgmt: 'bloc',
+///   backend: 'rest_api',
+///   outputDir: './my_project',
+/// );
+/// ```
 class CLIOptions {
   final String? description;
   final String stateMgmt;
@@ -10,6 +23,16 @@ class CLIOptions {
   final bool withDb;
   final bool useAI;
 
+  /// Creates a new [CLIOptions] instance
+  ///
+  /// Parameters:
+  ///   - [description]: Project description for AI analysis
+  ///   - [stateMgmt]: State management framework (bloc, riverpod, provider, getx)
+  ///   - [backend]: Backend type (rest_api, firebase, supabase, graphql)
+  ///   - [outputDir]: Directory where project will be generated
+  ///   - [withAuth]: Include authentication module
+  ///   - [withDb]: Include database configuration
+  ///   - [useAI]: Use AI for architecture generation
   CLIOptions({
     this.description,
     this.stateMgmt = 'bloc',
@@ -21,12 +44,21 @@ class CLIOptions {
   });
 }
 
+/// Command-line interface for Flutter Architect AI
+///
+/// Provides methods for displaying help, parsing arguments, and
+/// showing project configuration information.
 class CLIInterface {
+  /// Display welcome message to the user
   static void showWelcome() {
     ConsoleOutput.header('Flutter Architect AI - Project Generator');
     ConsoleOutput.info('AI-powered Flutter clean architecture generator');
   }
 
+  /// Display help and usage information
+  ///
+  /// Shows all available command-line options, examples, and
+  /// environment variable setup instructions.
   static void showHelp() {
     ConsoleOutput.header('Flutter Architect AI - Help');
     print('''
@@ -65,10 +97,15 @@ ENVIRONMENT:
 ''');
   }
 
+  /// Display the current version
   static void showVersion() {
     print('Flutter Architect AI v1.0.0');
   }
 
+  /// Display the current project configuration
+  ///
+  /// Shows all the selected options for the project generation,
+  /// including state management, backend, and feature flags.
   static void showConfig(CLIOptions options) {
     ConsoleOutput.subHeader('Project Configuration');
     print('State Management:   ${options.stateMgmt}');
@@ -79,11 +116,20 @@ ENVIRONMENT:
     print('Use AI Generation:  ${options.useAI ? 'Yes' : 'No'}');
   }
 
+  /// Display the list of detected features
+  ///
+  /// Shows features that will be generated as part of the project.
   static void showFeatures(List<String> features) {
     ConsoleOutput.subHeader('Generated Features');
     ConsoleOutput.list(features);
   }
 
+  /// Parse command-line arguments into [CLIOptions]
+  ///
+  /// Parses user-provided command-line arguments and returns
+  /// a [CLIOptions] object with the extracted configuration.
+  ///
+  /// Returns: [CLIOptions] if valid arguments are provided, null if help or version is shown
   static CLIOptions? parseArguments(List<String> args) {
     if (args.isEmpty) {
       showWelcome();

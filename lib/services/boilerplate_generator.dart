@@ -1,13 +1,45 @@
+/// Generates boilerplate code for different state management patterns
+///
+/// This class generates template code for feature modules based on the selected
+/// state management framework (BLoC, Riverpod, Provider, or GetX).
+///
+/// Example:
+/// ```dart
+/// final generator = BoilerplateGenerator(
+///   featureName: 'authentication',
+///   stateManagement: 'bloc',
+/// );
+/// final blocCode = generator.generateBlocBoilerplate();
+/// ```
 class BoilerplateGenerator {
+  /// The name of the feature this generator creates boilerplate for
   final String featureName;
+
+  /// The state management framework to use (bloc, riverpod, provider, getx)
   final String stateManagement;
 
+  /// Creates a new [BoilerplateGenerator]
+  ///
+  /// Parameters:
+  ///   - [featureName]: Name of the feature (e.g., 'auth', 'products')
+  ///   - [stateManagement]: State management pattern (e.g., 'bloc', 'riverpod')
   BoilerplateGenerator({
     required this.featureName,
     required this.stateManagement,
   });
 
   /// Generate bloc pattern boilerplate
+  ///
+  /// Returns a complete BLoC implementation template with events, states,
+  /// and event handlers for the feature.
+  ///
+  /// The generated code includes:
+  /// - Event classes for feature actions
+  /// - State classes for feature states
+  /// - Bloc class extending Bloc<Event, State>
+  /// - Event handler methods
+  ///
+  /// Returns: Complete BLoC boilerplate code as a String
   String generateBlocBoilerplate() =>
       '''
 import 'package:bloc/bloc.dart';
@@ -84,6 +116,17 @@ class ${_toPascalCase(featureName)}Error extends ${_toPascalCase(featureName)}St
 ''';
 
   /// Generate Riverpod pattern boilerplate
+  ///
+  /// Returns a complete Riverpod implementation with StateNotifier, State class,
+  /// and provider setup for the feature.
+  ///
+  /// The generated code includes:
+  /// - StateNotifier extending class
+  /// - State enum and state class
+  /// - Provider definition
+  /// - Loading, loaded, and error states
+  ///
+  /// Returns: Complete Riverpod boilerplate code as a String
   String generateRiverpodBoilerplate() =>
       '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -136,6 +179,17 @@ class ${_toPascalCase(featureName)}State {
 ''';
 
   /// Generate Provider pattern boilerplate
+  ///
+  /// Returns a complete Provider pattern implementation using the provider package
+  /// with ChangeNotifier for the feature.
+  ///
+  /// The generated code includes:
+  /// - ChangeNotifier-based provider class
+  /// - State management with getters
+  /// - Error handling
+  /// - Reset functionality
+  ///
+  /// Returns: Complete Provider boilerplate code as a String
   String generateProviderBoilerplate() =>
       '''
 import 'package:flutter/material.dart';
@@ -176,6 +230,17 @@ class ${_toPascalCase(featureName)}Provider extends ChangeNotifier {
 ''';
 
   /// Generate Entity boilerplate
+  ///
+  /// Returns a domain layer entity class with equality operators and toString.
+  /// Entities represent pure business domain models independent of frameworks.
+  ///
+  /// The generated code includes:
+  /// - Entity class with required fields
+  /// - Equality operator (==)
+  /// - Hash code implementation
+  /// - toString method
+  ///
+  /// Returns: Complete entity class as a String
   String generateEntityBoilerplate() =>
       '''
 class ${_toPascalCase(featureName)}Entity {
@@ -205,6 +270,17 @@ class ${_toPascalCase(featureName)}Entity {
 ''';
 
   /// Generate Model boilerplate
+  ///
+  /// Returns a data layer model class that extends the entity and adds
+  /// JSON serialization capabilities using json_annotation.
+  ///
+  /// The generated code includes:
+  /// - Model class extending entity
+  /// - fromJson factory constructor
+  /// - toJson method
+  /// - fromEntity factory constructor
+  ///
+  /// Returns: Complete model class as a String
   String generateModelBoilerplate() =>
       '''
 import 'package:json_annotation/json_annotation.dart';
@@ -234,6 +310,17 @@ class ${_toPascalCase(featureName)}Model extends ${_toPascalCase(featureName)}En
 ''';
 
   /// Generate Repository boilerplate
+  ///
+  /// Returns a repository implementation that coordinates between data sources
+  /// and domain layer, implementing network connectivity checks.
+  ///
+  /// The generated code includes:
+  /// - Repository implementation class
+  /// - Data source integration
+  /// - Network connectivity handling
+  /// - Either/Failure pattern for error handling
+  ///
+  /// Returns: Complete repository implementation as a String
   String generateRepositoryBoilerplate() =>
       '''
 import 'package:dartz/dartz.dart';
@@ -372,6 +459,32 @@ class ${_toPascalCase(featureName)}View extends StatelessWidget {
 ''';
 
   /// Get boilerplate for specific type
+  ///
+  /// Returns the appropriate boilerplate code for the given type.
+  /// Supports all major code components in clean architecture.
+  ///
+  /// Parameters:
+  ///   - type: The type of boilerplate to generate. Options:
+  ///     - 'bloc': Complete BLoC pattern
+  ///     - 'bloc_event': BLoC events only
+  ///     - 'bloc_state': BLoC states only
+  ///     - 'riverpod': Riverpod state management
+  ///     - 'provider': Provider state management
+  ///     - 'entity': Domain entity
+  ///     - 'model': Data model
+  ///     - 'repository': Repository implementation
+  ///     - 'repository_contract': Repository abstract class
+  ///     - 'datasource': Remote data source
+  ///     - 'usecase': Use case/interactor
+  ///     - 'page': Screen/page widget
+  ///
+  /// Returns: Boilerplate code as a string, empty string if type not found
+  ///
+  /// Example:
+  /// ```dart
+  /// final code = generator.getBoilerplateFor('bloc');
+  /// final entity = generator.getBoilerplateFor('entity');
+  /// ```
   String getBoilerplateFor(String type) {
     switch (type) {
       case 'bloc':
@@ -403,7 +516,16 @@ class ${_toPascalCase(featureName)}View extends StatelessWidget {
     }
   }
 
-  // Helper methods
+  /// Convert snake_case or camelCase string to PascalCase
+  ///
+  /// Splits the string by underscores, capitalizes each word, and joins.
+  /// Used for class name generation.
+  ///
+  /// Example:
+  /// ```dart
+  /// _toPascalCase('user_profile'); // Returns 'UserProfile'
+  /// _toPascalCase('myVariable'); // Returns 'Myvariable'
+  /// ```
   String _toPascalCase(String str) {
     return str
         .split('_')
@@ -411,11 +533,31 @@ class ${_toPascalCase(featureName)}View extends StatelessWidget {
         .join();
   }
 
+  /// Convert any case string to camelCase
+  ///
+  /// First converts to PascalCase, then lowercases the first character.
+  /// Used for variable and property names.
+  ///
+  /// Example:
+  /// ```dart
+  /// _toCamelCase('user_profile'); // Returns 'userProfile'
+  /// _toCamelCase('UserProfile'); // Returns 'userProfile'
+  /// ```
   String _toCamelCase(String str) {
     final pascal = _toPascalCase(str);
     return pascal[0].toLowerCase() + pascal.substring(1);
   }
 
+  /// Convert any case string to snake_case
+  ///
+  /// Inserts underscores before uppercase letters and lowercases everything.
+  /// Used for file names and constants.
+  ///
+  /// Example:
+  /// ```dart
+  /// _toSnakeCase('UserProfile'); // Returns 'user_profile'
+  /// _toSnakeCase('userProfile'); // Returns 'user_profile'
+  /// ```
   String _toSnakeCase(String str) {
     return str
         .replaceAllMapped(
@@ -426,6 +568,16 @@ class ${_toPascalCase(featureName)}View extends StatelessWidget {
         .toLowerCase();
   }
 
+  /// Convert any case string to kebab-case
+  ///
+  /// Converts to snake_case first, then replaces underscores with hyphens.
+  /// Used for route names and URLs.
+  ///
+  /// Example:
+  /// ```dart
+  /// _toKebabCase('UserProfile'); // Returns 'user-profile'
+  /// _toKebabCase('userProfile'); // Returns 'user-profile'
+  /// ```
   String _toKebabCase(String str) {
     return _toSnakeCase(str).replaceAll('_', '-');
   }
