@@ -7,11 +7,28 @@ class EnvironmentConfig {
 
   static bool _isInitialized = false;
 
-  /// Initialize environment variables from .env file
+  /// Initialize environment variables
+  /// Priority: GitHub Actions secrets/environment > .env file > defaults
   static Future<void> initialize() async {
     if (_isInitialized) return;
 
     try {
+      // 1. Try to load from system environment variables (GitHub Actions, Docker, etc.)
+      final systemGroqKey = Platform.environment['GROQ_API_KEY'];
+      final systemAppVersion = Platform.environment['APP_VERSION'];
+      final systemLogLevel = Platform.environment['LOG_LEVEL'];
+
+      if (systemGroqKey != null) {
+        // GitHub Actions environment detected
+        _groqApiKey = systemGroqKey;
+        _appVersion = systemAppVersion ?? '1.0.0';
+        _logLevel = systemLogLevel ?? 'INFO';
+
+        _isInitialized = true;
+        return;
+      }
+
+      // 2. Try to load from .env file (local development)
       final envFile = File('.env');
 
       if (await envFile.exists()) {
@@ -38,16 +55,20 @@ class EnvironmentConfig {
           }
         }
       } else {
-        // Try to load from system environment variables
-        _groqApiKey = Platform.environment['GROQ_API_KEY'] ?? '';
-        _appVersion = Platform.environment['APP_VERSION'] ?? '1.0.0';
-        _logLevel = Platform.environment['LOG_LEVEL'] ?? 'INFO';
+        // 3. Use defaults if neither system env nor .env exists
+        _groqApiKey = '';
+        _appVersion = '1.0.0';
+        _logLevel = 'INFO';
       }
 
       // Validate required configuration
       if (_groqApiKey.isEmpty) {
         throw Exception(
-          'GROQ_API_KEY not found. Please set it in .env file or GROQ_API_KEY environment variable.',
+          'GROQ_API_KEY not found. Please:\n'
+          '  - Local: Set GROQ_API_KEY in .env file\n'
+          '  - GitHub: Add GROQ_API_KEY to environment secrets\n'
+          '  - Docker: Set GROQ_API_KEY environment variable\n'
+          'Get your key from https://console.groq.com/keys',
         );
       }
 

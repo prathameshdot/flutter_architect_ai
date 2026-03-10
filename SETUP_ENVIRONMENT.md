@@ -39,14 +39,76 @@ dart run bin/flutter_architect_ai.dart "Test app description"
 
 ---
 
-## GitHub Secrets Setup
+## GitHub Environments Setup (Recommended)
 
-### Why Use GitHub Secrets?
+GitHub Environments provide better organization and protection rules for different deployment stages.
 
-- Keeps sensitive data (API keys) out of version control
-- Allows CI/CD workflows to access secrets
-- Enables automated testing and deployment
-- Prevents accidental exposure of credentials
+### Step 1: Create 'development' Environment
+
+1. Go to your repository:
+   ```
+   https://github.com/prathameshdot/flutter_architect_ai/settings/environments
+   ```
+
+2. Click **New environment**
+
+3. Name it **`development`**
+
+4. Click **Configure environment**
+
+### Step 2: Add Environment Secrets
+
+In the **development** environment, add these secrets:
+
+| Name | Value |
+|------|-------|
+| `GROQ_API_KEY` | `gsk_YOUR_ACTUAL_KEY` |
+| `APP_VERSION` | `1.0.0` |
+| `LOG_LEVEL` | `info` |
+
+### Step 3: (Optional) Configure Protection Rules
+
+For production safety:
+
+1. Enable **Required reviewers** - Require approval before deployments
+2. Set **Wait timer** - Wait 1-5 minutes before allowing deployment
+3. Enable **Custom rules** - Use GitHub Apps for additional validation
+
+### Step 4: Configure Deployment Branches
+
+To limit which branches can deploy:
+
+1. Under "Deployment branches and tags"
+2. Select branch policy: "Protected branches only" or "Selected branches"
+3. Add: `main`, `develop`
+
+---
+
+## Priority Order: How Environment Variables Are Loaded
+
+The application loads environment variables in this order (first match wins):
+
+```
+1. GitHub Actions Secrets/Environment variables
+   └─ Used during CI/CD pipeline
+   └─ Set in Settings > Environments > development
+
+2. System Environment Variables  
+   └─ Docker environment variables
+   └─ Heroku/Cloud deployment variables
+   └─ Terminal environment variables
+
+3. .env file (Local Development)
+   └─ Read from `.env` file in project root
+   └─ Used for local development
+
+4. Default Values
+   └─ Fallback values if nothing else is set
+   └─ APP_VERSION: 1.0.0
+   └─ LOG_LEVEL: INFO
+```
+
+---
 
 ### Step 1: Add Repository Secrets
 
