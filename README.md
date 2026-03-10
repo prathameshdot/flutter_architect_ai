@@ -52,6 +52,26 @@ dart run bin/flutter_architect_ai.dart --help
 
 ---
 
+## Environment Setup
+
+### Required: Groq API Key
+
+Flutter Architect AI requires a Groq API key for AI-powered project generation.
+
+1. Get your API key from https://console.groq.com/keys
+2. Create a `.env` file in the project root:
+   ```bash
+   cp .env.example .env
+   ```
+3. Add your API key:
+   ```bash
+   GROQ_API_KEY=gsk_your_api_key_here
+   ```
+
+For complete setup instructions, see [SETUP_ENVIRONMENT.md](SETUP_ENVIRONMENT.md)
+
+---
+
 ## Quick Start
 
 ### AI-Powered Generation
