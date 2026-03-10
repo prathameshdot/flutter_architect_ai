@@ -36,7 +36,7 @@ class BoilerplateGenerator {
   /// The generated code includes:
   /// - Event classes for feature actions
   /// - State classes for feature states
-  /// - Bloc class extending Bloc<Event, State>
+  /// - Bloc class extending `Bloc<Event, State>`
   /// - Event handler methods
   ///
   /// Returns: Complete BLoC boilerplate code as a String

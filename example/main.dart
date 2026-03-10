@@ -1,7 +1,4 @@
-import 'package:flutter_architect_ai/cli/cli_interface.dart';
-import 'package:flutter_architect_ai/services/groq_ai_service.dart';
 import 'package:flutter_architect_ai/services/file_generator.dart';
-import 'package:flutter_architect_ai/services/boilerplate_generator.dart';
 import 'package:flutter_architect_ai/config/environment_config.dart';
 
 /// Example usage of Flutter Architect AI
@@ -46,18 +43,22 @@ void main() async {
     print('    Core modules generated');
 
     // Generate shared modules
-    await generator.generateSharedStructure({});
+    await generator.generateSharedStructure();
     print('    Shared modules generated');
 
     // Generate example feature (auth)
     final features = ['auth', 'products', 'cart'];
     for (final feature in features) {
-      await generator.generateFeatureStructure(feature, {});
+      await generator.generateFeature(
+        featureName: feature,
+        stateManagement: 'bloc',
+        templates: {},
+      );
       print('    Feature module generated: $feature');
     }
 
     // Generate config modules
-    await generator.generateConfigStructure({});
+    await generator.generateConfig('bloc', 'rest', {});
     print('    Configuration modules generated\n');
 
     // Step 4: Display configuration options
