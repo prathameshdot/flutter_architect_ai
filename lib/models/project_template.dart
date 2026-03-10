@@ -181,7 +181,8 @@ flutter:
     - assets/fonts/
 ''';
 
-  static const String analysisOptionsTemplate = '''include: package:flutter_lints/flutter.yaml
+  static const String analysisOptionsTemplate =
+      '''include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
@@ -385,7 +386,8 @@ class MyApp extends StatelessWidget {
 }
 ''';
 
-  static const String serviceLocatorTemplate = '''import 'package:get_it/get_it.dart';
+  static const String serviceLocatorTemplate =
+      '''import 'package:get_it/get_it.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/network_info.dart';
 import '../../core/services/logger_service.dart';
@@ -403,7 +405,8 @@ void initializeServiceLocator() {
 }
 ''';
 
-  static const String envConfigTemplate = '''enum Flavor { development, staging, production }
+  static const String envConfigTemplate =
+      '''enum Flavor { development, staging, production }
 
 class Environment {
   static late Flavor _flavor;

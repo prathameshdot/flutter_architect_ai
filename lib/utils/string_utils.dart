@@ -1,12 +1,9 @@
 // String Transformation Utilities
 String toPascalCase(String str) {
-  return str
-      .split(RegExp('_|-| '))
-      .map((word) {
-        if (word.isEmpty) return '';
-        return word[0].toUpperCase() + word.substring(1).toLowerCase();
-      })
-      .join();
+  return str.split(RegExp('_|-| ')).map((word) {
+    if (word.isEmpty) return '';
+    return word[0].toUpperCase() + word.substring(1).toLowerCase();
+  }).join();
 }
 
 String toCamelCase(String str) {
@@ -17,7 +14,10 @@ String toCamelCase(String str) {
 
 String toSnakeCase(String str) {
   return str
-      .replaceAllMapped(RegExp(r'[A-Z]'), (match) => '_${match.group(0)!.toLowerCase()}')
+      .replaceAllMapped(
+        RegExp(r'[A-Z]'),
+        (match) => '_${match.group(0)!.toLowerCase()}',
+      )
       .replaceFirst(RegExp('^_'), '')
       .toLowerCase();
 }
@@ -91,7 +91,7 @@ String createBox(String title, List<String> items, {int width = 70}) {
   final titleLine = '│ $title${' ' * (width - 4 - title.length)}│';
   final divider = '├${'─' * (width - 2)}┤';
   final lines = <String>[];
-  
+
   for (final item in items) {
     if (item.length > width - 4) {
       // Wrap long text
@@ -104,16 +104,10 @@ String createBox(String title, List<String> items, {int width = 70}) {
       lines.add('│ $item${' ' * (width - 4 - item.length)}│');
     }
   }
-  
+
   final bottom = '└${'─' * (width - 2)}┘';
-  
-  return [
-    top,
-    titleLine,
-    divider,
-    ...lines,
-    bottom,
-  ].join('\n');
+
+  return [top, titleLine, divider, ...lines, bottom].join('\n');
 }
 
 // Color codes for terminal output

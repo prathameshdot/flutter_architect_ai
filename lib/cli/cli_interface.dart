@@ -2,7 +2,7 @@ import 'console_output.dart';
 
 /// Simplified CLI interface for Flutter Architect AI
 class CLIOptions {
-  final String?description;
+  final String? description;
   final String stateMgmt;
   final String backend;
   final String outputDir;

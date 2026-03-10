@@ -11,7 +11,7 @@ class FileGenerator {
     for (final dir in directories) {
       final fullPath = path.join(projectPath, dir);
       await Directory(fullPath).create(recursive: true);
-      
+
       // Create .gitkeep to preserve empty directories
       final gitkeepFile = File(path.join(fullPath, '.gitkeep'));
       if (!await gitkeepFile.exists()) {
@@ -72,7 +72,8 @@ class FileGenerator {
     await createDirectoryStructure(structure);
 
     // Create data layer files
-    final datasourceName = '${_toCamelCase(featureName)}_remote_datasource.dart';
+    final datasourceName =
+        '${_toCamelCase(featureName)}_remote_datasource.dart';
     await createFile(
       filePath: '$featurePath/data/datasources/$datasourceName',
       content: templates['remoteDatasource'] ?? '',
@@ -538,7 +539,8 @@ class AppTheme {
 }
 ''';
 
-  String _generateBuildContextExtension() => '''import 'package:flutter/material.dart';
+  String _generateBuildContextExtension() =>
+      '''import 'package:flutter/material.dart';
 
 extension BuildContextExtension on BuildContext {
   /// Get screen size
@@ -613,7 +615,8 @@ void initializeServiceLocator() {
 }
 ''';
 
-  String _generateEnvConfig() => '''enum Flavor { development, staging, production }
+  String _generateEnvConfig() =>
+      '''enum Flavor { development, staging, production }
 
 class Environment {
   static late Flavor _flavor;
@@ -745,7 +748,8 @@ class ErrorPage extends StatelessWidget {
 }
 ''';
 
-  String _generateReadme(String projectName, String description) => '''# $projectName
+  String _generateReadme(String projectName, String description) =>
+      '''# $projectName
 
 $description
 

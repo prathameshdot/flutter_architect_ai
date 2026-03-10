@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../config/environment_config.dart';
 
 class GroqAIService {
-  static const String baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
+  static const String baseUrl =
+      'https://api.groq.com/openai/v1/chat/completions';
 
   /// Generate Flutter project architecture based on description
   Future<Map<String, dynamic>> generateArchitecture({
@@ -31,13 +32,11 @@ class GroqAIService {
           'messages': [
             {
               'role': 'system',
-              'content': 'You are a Flutter architecture expert. Generate only valid JSON '
+              'content':
+                  'You are a Flutter architecture expert. Generate only valid JSON '
                   'responses without markdown formatting or code blocks.',
             },
-            {
-              'role': 'user',
-              'content': prompt,
-            },
+            {'role': 'user', 'content': prompt},
           ],
           'temperature': 0.7,
           'max_tokens': 2048,
@@ -62,7 +61,9 @@ class GroqAIService {
           throw Exception('Invalid JSON response from AI: $content');
         }
       } else {
-        throw Exception('Groq API error: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Groq API error: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       throw Exception('Failed to generate architecture: $e');
@@ -113,7 +114,8 @@ Only return valid JSON without any markdown, code blocks, or explanations.''';
     required String featureName,
     required String stateManagement,
   }) async {
-    final prompt = '''Generate Flutter clean architecture boilerplate for a "$featureName" feature.
+    final prompt =
+        '''Generate Flutter clean architecture boilerplate for a "$featureName" feature.
     
 State Management: $stateManagement
 
@@ -143,13 +145,11 @@ Only return valid JSON without markdown.''';
           'messages': [
             {
               'role': 'system',
-              'content': 'You are a Dart/Flutter code generation expert. Generate complete, '
+              'content':
+                  'You are a Dart/Flutter code generation expert. Generate complete, '
                   'production-ready code templates. Return only valid JSON.',
             },
-            {
-              'role': 'user',
-              'content': prompt,
-            },
+            {'role': 'user', 'content': prompt},
           ],
           'temperature': 0.5,
           'max_tokens': 3000,
@@ -172,7 +172,9 @@ Only return valid JSON without markdown.''';
           throw Exception('Invalid JSON response');
         }
       } else {
-        throw Exception('Failed to generate boilerplate: ${response.statusCode}');
+        throw Exception(
+          'Failed to generate boilerplate: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Boilerplate generation error: $e');
@@ -184,7 +186,8 @@ Only return valid JSON without markdown.''';
     required String fileType,
     required String context,
   }) async {
-    final prompt = '''Generate a complete, production-ready Dart file for:
+    final prompt =
+        '''Generate a complete, production-ready Dart file for:
 
 File Name: $fileName
 File Type: $fileType (dart, yaml, json, etc)
@@ -211,12 +214,10 @@ Return only the file content without markdown or code blocks.''';
           'messages': [
             {
               'role': 'system',
-              'content': 'You are an expert Dart developer. Generate production-ready code.',
+              'content':
+                  'You are an expert Dart developer. Generate production-ready code.',
             },
-            {
-              'role': 'user',
-              'content': prompt,
-            },
+            {'role': 'user', 'content': prompt},
           ],
           'temperature': 0.3,
           'max_tokens': 4000,

@@ -43,13 +43,15 @@ Future<void> _generateProject(CLIOptions options) async {
     // Step 2: Determine project path - use outputDir directly if it's existing Flutter project
     final projectPath = options.outputDir.replaceAll('\\', '/');
     final projectDir = Directory(projectPath);
-    
+
     // Check if outputDir is an existing Flutter project
-    final isExistingFlutterProject = await projectDir.exists() &&
+    final isExistingFlutterProject =
+        await projectDir.exists() &&
         await File('$projectPath/pubspec.yaml').exists() &&
         await File('$projectPath/.metadata').exists();
 
-    String projectName = options.description
+    String projectName =
+        options.description
             ?.toLowerCase()
             .replaceAll(RegExp(r'[^a-z0-9_]'), '_')
             .replaceAll(RegExp(r'_+'), '_')
@@ -59,22 +61,26 @@ Future<void> _generateProject(CLIOptions options) async {
     // If not existing Flutter project, create it with flutter create
     if (!isExistingFlutterProject) {
       ConsoleOutput.step(2, 'Creating Flutter Project');
-      
+
       // Try to run flutter create, but continue if flutter is not in PATH
       try {
         ConsoleOutput.info('Running: flutter create $projectPath');
-        final result = await Process.run('flutter', ['create', projectPath],
-            runInShell: true);
-        
+        final result = await Process.run('flutter', [
+          'create',
+          projectPath,
+        ], runInShell: true);
+
         if (result.exitCode != 0) {
           // Check if it's a "command not found" error or actual flutter error
           final stderr = result.stderr.toString().toLowerCase();
-          if (stderr.contains('not found') || 
+          if (stderr.contains('not found') ||
               stderr.contains('is not recognized') ||
               stderr.contains('cannot find')) {
             ConsoleOutput.warning('Flutter CLI not found in PATH');
-            ConsoleOutput.info('Creating project directory structure manually...');
-            
+            ConsoleOutput.info(
+              'Creating project directory structure manually...',
+            );
+
             // Create basic project structure manually
             await projectDir.create(recursive: true);
             ConsoleOutput.success('Project directory created at: $projectPath');
@@ -88,11 +94,13 @@ Future<void> _generateProject(CLIOptions options) async {
         }
       } catch (e) {
         // If flutter command is not available, create structure manually
-        if (e.toString().contains('not found') || 
+        if (e.toString().contains('not found') ||
             e.toString().contains('No such file')) {
           ConsoleOutput.warning('Flutter CLI not found in PATH');
-          ConsoleOutput.info('Creating project directory structure manually...');
-          
+          ConsoleOutput.info(
+            'Creating project directory structure manually...',
+          );
+
           // Create basic project structure manually
           await projectDir.create(recursive: true);
           ConsoleOutput.success('Project directory created at: $projectPath');
@@ -173,7 +181,7 @@ Future<void> _generateProject(CLIOptions options) async {
 
     // Generate lib structure (always fresh)
     ConsoleOutput.info('Generating lib folder...');
-    
+
     // Generate core modules
     ConsoleOutput.info('  - Generating core modules...');
     await generator.generateCoreStructure({});
@@ -197,7 +205,8 @@ Future<void> _generateProject(CLIOptions options) async {
         templates: {
           'entity': boilerplateGen.generateEntityBoilerplate(),
           'model': boilerplateGen.generateModelBoilerplate(),
-          'remoteDatasource': boilerplateGen.generateRemoteDatasourceBoilerplate(),
+          'remoteDatasource': boilerplateGen
+              .generateRemoteDatasourceBoilerplate(),
           'bloc': boilerplateGen.generateBlocBoilerplate(),
           'riverpodProvider': boilerplateGen.generateRiverpodBoilerplate(),
           'page': boilerplateGen.generatePageBoilerplate(),
@@ -225,7 +234,7 @@ Future<void> _generateProject(CLIOptions options) async {
       '$projectPath/assets/icons',
       '$projectPath/assets/fonts',
     ];
-    
+
     for (final dir in assetsDirs) {
       final d = Directory(dir);
       if (!await d.exists()) {
@@ -242,34 +251,34 @@ Future<void> _generateProject(CLIOptions options) async {
     // Generate test folder
     ConsoleOutput.info('Generating test folder...');
     final testDirPath = Directory('$projectPath/test');
-    
+
     if (!await testDirPath.exists()) {
       await testDirPath.create(recursive: true);
     }
 
     // Create example test file
-    await File('$projectPath/test/widget_test.dart').writeAsString(
-      _generateExampleTest(projectName),
-    );
+    await File(
+      '$projectPath/test/widget_test.dart',
+    ).writeAsString(_generateExampleTest(projectName));
 
     ConsoleOutput.success('test folder complete');
 
     // Generate root configuration files (only if they don't exist)
     ConsoleOutput.info('Generating configuration files...');
-    
+
     if (!await File('$projectPath/pubspec.yaml').exists()) {
-      await File('$projectPath/pubspec.yaml').writeAsString(
-        _generatePubspec(projectName, options.description ?? ''),
-      );
+      await File(
+        '$projectPath/pubspec.yaml',
+      ).writeAsString(_generatePubspec(projectName, options.description ?? ''));
       ConsoleOutput.success('pubspec.yaml created');
     } else {
       ConsoleOutput.info('pubspec.yaml already exists - skipped');
     }
 
     if (!await File('$projectPath/analysis_options.yaml').exists()) {
-      await File('$projectPath/analysis_options.yaml').writeAsString(
-        _generateAnalysisOptions(),
-      );
+      await File(
+        '$projectPath/analysis_options.yaml',
+      ).writeAsString(_generateAnalysisOptions());
       ConsoleOutput.success('analysis_options.yaml created');
     } else {
       ConsoleOutput.info('analysis_options.yaml already exists - skipped');
@@ -283,18 +292,18 @@ Future<void> _generateProject(CLIOptions options) async {
     }
 
     if (!await File('$projectPath/README.md').exists()) {
-      await File('$projectPath/README.md').writeAsString(
-        _generateReadme(projectName, features, options),
-      );
+      await File(
+        '$projectPath/README.md',
+      ).writeAsString(_generateReadme(projectName, features, options));
       ConsoleOutput.success('README.md created');
     } else {
       ConsoleOutput.info('README.md already exists - skipped');
     }
 
     if (!await File('$projectPath/CHANGELOG.md').exists()) {
-      await File('$projectPath/CHANGELOG.md').writeAsString(
-        _generateChangelog(),
-      );
+      await File(
+        '$projectPath/CHANGELOG.md',
+      ).writeAsString(_generateChangelog());
       ConsoleOutput.success('CHANGELOG.md created');
     } else {
       ConsoleOutput.info('CHANGELOG.md already exists - skipped');
@@ -302,10 +311,12 @@ Future<void> _generateProject(CLIOptions options) async {
 
     // Step 5: Run flutter clean and flutter pub get
     ConsoleOutput.step(5, 'Running Flutter Commands');
-    
+
     try {
       ConsoleOutput.info('Running: flutter clean');
-      var cleanResult = await Process.run('flutter', ['clean'], workingDirectory: projectPath);
+      var cleanResult = await Process.run('flutter', [
+        'clean',
+      ], workingDirectory: projectPath);
       if (cleanResult.exitCode == 0) {
         ConsoleOutput.success('flutter clean completed');
       } else {
@@ -313,7 +324,10 @@ Future<void> _generateProject(CLIOptions options) async {
       }
 
       ConsoleOutput.info('Running: flutter pub get');
-      var pubResult = await Process.run('flutter', ['pub', 'get'], workingDirectory: projectPath);
+      var pubResult = await Process.run('flutter', [
+        'pub',
+        'get',
+      ], workingDirectory: projectPath);
       if (pubResult.exitCode == 0) {
         ConsoleOutput.success('flutter pub get completed');
       } else {
@@ -392,7 +406,8 @@ List<String> _extractDefaultFeatures(String description) {
   return features;
 }
 
-String _generateMainDart(String projectName) => '''import 'package:flutter/material.dart';
+String _generateMainDart(String projectName) =>
+    '''import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -443,7 +458,8 @@ class HomePage extends StatelessWidget {
 }
 ''';
 
-String _generateExampleTest(String projectName) => '''import 'package:flutter/material.dart';
+String _generateExampleTest(String projectName) =>
+    '''import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -458,7 +474,8 @@ void main() {
 }
 ''';
 
-String _generatePubspec(String projectName, String description) => '''name: $projectName
+String _generatePubspec(String projectName, String description) =>
+    '''name: $projectName
 description: $description
 publish_to: 'none'
 
@@ -494,7 +511,8 @@ flutter:
           weight: 700
 ''';
 
-String _generateAnalysisOptions() => '''include: package:flutter_lints/flutter.yaml
+String _generateAnalysisOptions() =>
+    '''include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
@@ -616,7 +634,14 @@ coverage/
 .git/
 ''';
 
-String _generateReadme(String projectName, List<String> features, CLIOptions options) => r'''# ''' + projectName + r'''
+String _generateReadme(
+  String projectName,
+  List<String> features,
+  CLIOptions options,
+) =>
+    r'''# ''' +
+    projectName +
+    r'''
 
 A Flutter application built with Clean Architecture principles.
 
@@ -626,14 +651,20 @@ This project demonstrates best practices in Flutter development using Clean Arch
 
 ## Features
 
-''' + features.map((f) => '- $f').join('\n') + r'''
+''' +
+    features.map((f) => '- $f').join('\n') +
+    r'''
 
 ## Technology Stack
 
 - **Framework**: Flutter 3.0+
 - **Architecture**: Clean Architecture
-- **State Management**: ''' + options.stateMgmt + r'''
-- **Backend**: ''' + options.backend + r'''
+- **State Management**: ''' +
+    options.stateMgmt +
+    r'''
+- **Backend**: ''' +
+    options.backend +
+    r'''
 - **Language**: Dart 3.0+
 
 ## Project Structure
@@ -677,7 +708,9 @@ test/                     # Unit and widget tests
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd ''' + projectName + r'''
+cd ''' +
+    projectName +
+    r'''
 ```
 
 2. Install dependencies:
@@ -771,4 +804,3 @@ String _generateChangelog() => '''# Changelog
 
 Upcoming features and improvements to be added in future versions.
 ''';
-

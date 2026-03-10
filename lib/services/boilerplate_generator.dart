@@ -8,7 +8,8 @@ class BoilerplateGenerator {
   });
 
   /// Generate bloc pattern boilerplate
-  String generateBlocBoilerplate() => '''
+  String generateBlocBoilerplate() =>
+      '''
 import 'package:bloc/bloc.dart';
 
 part '${_toSnakeCase(featureName)}_event.dart';
@@ -34,7 +35,8 @@ class ${_toPascalCase(featureName)}Bloc extends Bloc<${_toPascalCase(featureName
 }
 ''';
 
-  String generateBlocEventBoilerplate() => '''
+  String generateBlocEventBoilerplate() =>
+      '''
 part of '${_toSnakeCase(featureName)}_bloc.dart';
 
 abstract class ${_toPascalCase(featureName)}Event extends Equatable {
@@ -49,7 +51,8 @@ class ${_toPascalCase(featureName)}InitialEvent extends ${_toPascalCase(featureN
 }
 ''';
 
-  String generateBlocStateBoilerplate() => '''
+  String generateBlocStateBoilerplate() =>
+      '''
 part of '${_toSnakeCase(featureName)}_bloc.dart';
 
 abstract class ${_toPascalCase(featureName)}State extends Equatable {
@@ -81,7 +84,8 @@ class ${_toPascalCase(featureName)}Error extends ${_toPascalCase(featureName)}St
 ''';
 
   /// Generate Riverpod pattern boilerplate
-  String generateRiverpodBoilerplate() => '''
+  String generateRiverpodBoilerplate() =>
+      '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final ${_toCamelCase(featureName)}Provider = StateNotifierProvider<${_toPascalCase(featureName)}Notifier, ${_toPascalCase(featureName)}State>((ref) {
@@ -132,7 +136,8 @@ class ${_toPascalCase(featureName)}State {
 ''';
 
   /// Generate Provider pattern boilerplate
-  String generateProviderBoilerplate() => '''
+  String generateProviderBoilerplate() =>
+      '''
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -171,7 +176,8 @@ class ${_toPascalCase(featureName)}Provider extends ChangeNotifier {
 ''';
 
   /// Generate Entity boilerplate
-  String generateEntityBoilerplate() => '''
+  String generateEntityBoilerplate() =>
+      '''
 class ${_toPascalCase(featureName)}Entity {
   final String id;
   final String name;
@@ -199,7 +205,8 @@ class ${_toPascalCase(featureName)}Entity {
 ''';
 
   /// Generate Model boilerplate
-  String generateModelBoilerplate() => '''
+  String generateModelBoilerplate() =>
+      '''
 import 'package:json_annotation/json_annotation.dart';
 import '../../../domain/entities/${_toSnakeCase(featureName)}_entity.dart';
 
@@ -227,7 +234,8 @@ class ${_toPascalCase(featureName)}Model extends ${_toPascalCase(featureName)}En
 ''';
 
   /// Generate Repository boilerplate
-  String generateRepositoryBoilerplate() => '''
+  String generateRepositoryBoilerplate() =>
+      '''
 import 'package:dartz/dartz.dart';
 import '../../../core/error/failures.dart';
 import '../../../core/network/network_info.dart';
@@ -262,7 +270,8 @@ class ${_toPascalCase(featureName)}RepositoryImpl implements ${_toPascalCase(fea
 ''';
 
   /// Generate Remote Datasource boilerplate
-  String generateRemoteDatasourceBoilerplate() => '''
+  String generateRemoteDatasourceBoilerplate() =>
+      '''
 import '../models/${_toSnakeCase(featureName)}_model.dart';
 
 abstract class ${_toPascalCase(featureName)}RemoteDatasource {
@@ -281,7 +290,8 @@ class ${_toPascalCase(featureName)}RemoteDatasourceImpl implements ${_toPascalCa
 ''';
 
   /// Generate Repository contract boilerplate
-  String generateRepositoryContractBoilerplate() => '''
+  String generateRepositoryContractBoilerplate() =>
+      '''
 import 'package:dartz/dartz.dart';
 import '../../../core/error/failures.dart';
 import '../entities/${_toSnakeCase(featureName)}_entity.dart';
@@ -292,7 +302,8 @@ abstract class ${_toPascalCase(featureName)}Repository {
 ''';
 
   /// Generate Use Case boilerplate
-  String generateUsecaseBoilerplate() => '''
+  String generateUsecaseBoilerplate() =>
+      '''
 import 'package:dartz/dartz.dart';
 import '../../../core/error/failures.dart';
 import '../entities/${_toSnakeCase(featureName)}_entity.dart';
@@ -310,7 +321,8 @@ class Get${_toPascalCase(featureName)}Usecase {
 ''';
 
   /// Generate Page/Screen boilerplate
-  String generatePageBoilerplate() => '''
+  String generatePageBoilerplate() =>
+      '''
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -406,7 +418,10 @@ class ${_toPascalCase(featureName)}View extends StatelessWidget {
 
   String _toSnakeCase(String str) {
     return str
-        .replaceAllMapped(RegExp(r'[A-Z]'), (match) => '_\${match.group(0)!.toLowerCase()}')
+        .replaceAllMapped(
+          RegExp(r'[A-Z]'),
+          (match) => '_\${match.group(0)!.toLowerCase()}',
+        )
         .replaceFirst('_', '')
         .toLowerCase();
   }
